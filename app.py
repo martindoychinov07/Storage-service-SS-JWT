@@ -14,6 +14,7 @@ METADATA_FILE = 'metadata.json'
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
+app.config['SECRET_KEY'] = 'thisissecret'
 ma = Marshmallow(app)
 
 def load_metadata():
