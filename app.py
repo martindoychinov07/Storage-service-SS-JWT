@@ -15,7 +15,6 @@ if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
 ma = Marshmallow(app)
-app.config['SECRET_KEY'] = 'key'
 
 def load_metadata():
     if os.path.exists(METADATA_FILE):
@@ -58,6 +57,19 @@ def upload():
     save_metadata(metadata)
 
     return jsonify({"message": f"File '{file.filename}' uploaded successfully"})
+
+@app.route('/login')
+def login():
+    auth = request.authorization
+    if auth and auth.password == 'password':
+        token = jwt.encode(
+            {'user': auth.username, 'exp': datetime.datetime.now(datetime.UTC) + datetime.timedelta(minutes=20)},
+            app.config['SECRET_KEY'],
+            algorithm='HS256'
+        )
+        return jsonify({'token': token})
+    else:
+        return make_response('Unable to verify'), 403
 
 if __name__ == '__main__':
     app.run(debug=True)
